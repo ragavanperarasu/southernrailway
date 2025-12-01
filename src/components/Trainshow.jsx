@@ -51,15 +51,16 @@ const [loading, setLoading] = useState(true);
 
 
   useEffect(() => {
-    // Connect to Socket.IO server
-    const socket = io("https://bharatrails.vercel.app/"); // replace with your server URL
+    //http://localhost:5000
+    // Connect to Socket.IO server https://bharatrails.vercel.app/
+    const socket = io("http://72.60.103.126:5000/"); // replace with your server URL
 
     // Request data
     socket.emit("getdata");
 
     // Listen for product data
     socket.on("productData", (data) => {
-      //console.log("Received data:", data);
+      console.log("Received data:", data);
       setProducts(data);
       setLoading(false);
     });
@@ -173,9 +174,7 @@ const [loading, setLoading] = useState(true);
               </Typography>
 
 
-              {products
-                .filter((product) => product.pribat < 20)
-                .map((product, index) => (
+              {products.filter((product) => product.pribat < 20).map((product, index) => (
                   <Grid
                   key={index}
                     item
