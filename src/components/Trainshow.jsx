@@ -53,7 +53,7 @@ const [loading, setLoading] = useState(true);
   useEffect(() => {
     //http://localhost:5000
     // Connect to Socket.IO server https://bharatrails.vercel.app/
-    const socket = io("http://72.60.103.126:5000/"); // replace with your server URL
+    const socket = io("http://72.60.103.126/"); // replace with your server URL
 
     // Request data
     socket.emit("getdata");
