@@ -15,11 +15,6 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 
-import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
-import SignalCellularAlt2BarIcon from '@mui/icons-material/SignalCellularAlt2Bar';
-import SignalCellularAlt1BarIcon from '@mui/icons-material/SignalCellularAlt1Bar';
-
-
 // Fix default marker issue using CDN URLs (no local images needed)
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -52,7 +47,7 @@ const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     //http://localhost:5000
-    // Connect to Socket.IO server https://bharatrails.vercel.app/
+    // Connect to Socket.IO server http://72.60.103.126/
     const socket = io("http://72.60.103.126/"); // replace with your server URL
 
     // Request data
@@ -100,7 +95,7 @@ const [loading, setLoading] = useState(true);
 
 
   return (
-    <Box sx={{ bgcolor: "#E5E4E2", minHeight: "100vh", height: "100%" }}>
+    <Box sx={{ bgcolor: "#ffffffff", minHeight: "100vh", height: "100%" }}>
       <Appbar />
 
       <Dialog open={open} onClose={() => setOpen(false)}>
@@ -118,6 +113,9 @@ const [loading, setLoading] = useState(true);
           </DialogContentText>
         </DialogContent>
         <DialogActions>
+        <Button onClick={() => navigate("/trainstatus", { state: dataopen })}>
+            History
+          </Button>
           <Button onClick={() => setOpen(false)}>
             Close
           </Button>

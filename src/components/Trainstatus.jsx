@@ -1,330 +1,240 @@
-import React from "react";
-import { Box, Typography, Grid } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  Typography,
+  Box,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  CircularProgress,
+  Stack,
+} from "@mui/material";
 import Appbar from "./Appbar";
+import { useLocation, useNavigate } from "react-router-dom";
 import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
 import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
 import BoltIcon from "@mui/icons-material/Bolt";
+import axios from "axios";
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+const sampleData = [
+  { time: "10:00", pribat: 10 },
+  { time: "10:05", pribat: 20 },
+  { time: "10:10", pribat: 15 },
+  { time: "10:15", pribat: 30 },
+];
 
 const Trainstatus = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { coachid } = location.state || {};
+
+  const [trainData, setTrainData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const [pribatData, setPribatData] = useState([]);
+  const [backbatData, setBackbatData] = useState([]);
+  const [signalData, setSignalData] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, [coachid]);
+
+  const fetchData = async () => {
+    console.log("Inside fetchData function");
+    try {
+      const response = await axios.get(
+        `http://72.60.103.126/coach/${coachid}`
+      );
+
+      const raw = response.data;
+
+      const priData = raw.map((item) => {
+        const d = new Date(item.createdAt);
+        const date = d.toISOString().split("T")[0];
+        const time = d.toLocaleTimeString(); 
+        return {
+          time: `${date} ${time}`,
+          volt: item.pribat,
+        };
+      });
+
+
+      const backData = raw.map((item) => {
+        const d = new Date(item.createdAt);
+        const date = d.toISOString().split("T")[0];
+        const time = d.toLocaleTimeString(); 
+
+        return {
+          time: `${date} ${time}`,
+          volt: item.backbat,
+        };
+      });
+
+      const signalData = raw.map((item) => {
+        const d = new Date(item.createdAt);
+        const date = d.toISOString().split("T")[0];
+        const time = d.toLocaleTimeString(); 
+
+        return {
+          time: `${date} ${time}`,
+          signal: item.sig,
+        };
+      });
+
+      setPribatData(priData);
+      setBackbatData(backData);
+      setSignalData(signalData);
+    } catch (error) {
+      console.error("Error fetching train status data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ bgcolor: "#E5E4E2", minHeight: "100vh", height: "100%" }}>
+        <Appbar />
+        <Typography variant="h5" sx={{ textAlign: "center", mt: 10 }}>
+          Fetching Data...
+        </Typography>
+
+        <Stack
+          spacing={2}
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          sx={{ mt: 5 }}
+        >
+          <CircularProgress enableTrackSlot size="3rem" />
+        </Stack>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ bgcolor: "#ffffffff", minHeight: "100vh" }}>
+    <>
       <Appbar />
 
-      <Box
+      <Typography
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          py: 5,
+          color: "#00A693",
+          fontSize: { xs: 20, md: 27, lg: 27 },
+          fontWeight: 600,
+          textAlign: "center",
+          width: "100%",
+          marginBottom: 2,
         }}
       >
-        <Box
-          sx={{
-            bgcolor: "transparent",
-            width: { xs: "95%", md: "85%", lg: "75%" },
-            borderRadius: 3,
-            boxShadow: "0px 0px 16px -5px #6CB4EE",
-            p: 4,
-          }}
-        >
-          {/* Train ID */}
-          <Typography
-            gutterBottom
-            sx={{
-              color: "white",
-              fontSize: 45,
-              fontWeight: 600,
-              textAlign: "center",
-              mb: 4,
-            }}
-          >
-            BE-576231
-          </Typography>
+        Coach History - {coachid}
+      </Typography>
 
-
-
-          {/* 2x2 Grid Layout */}
-          <Grid container spacing={3}>
-            {/* 1,1 Signal Strength */}
-            <Grid item size={{xs: 12, sm: 6, md: 4 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                Signal Strength
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#09ba15ff",
-                  fontSize: 36,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <SignalCellularAltIcon
-                  sx={{ color: "#09ba15ff", fontSize: 55, mr: 1 }}
-                />
-                95%
-              </Typography>
-            </Grid>
-
-            {/* 1,2 Main Power */}
-            <Grid item size={{xs: 12, sm: 6, md: 4 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                Main Power Supply
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#09ba15ff",
-                  fontSize: 28,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <BoltIcon sx={{ color: "#09ba15ff", fontSize: 55, mr: 1 }} />
-                110v - On 
-              </Typography>
-            </Grid>
-
-            {/* 2,1 Main Battery */}
-            <Grid item size={{xs: 12, sm: 6, md: 4 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                Main Battery
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#FF5800",
-                  fontSize: 28,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <BatteryChargingFullIcon
-                  sx={{ color: "#FF5800", fontSize: 50, mr: 1 }}
-                />
-                24.00 v
-              </Typography>
-            </Grid>
-
-            {/* 2,2 Backup Battery */}
-            <Grid item size={{xs: 12, sm: 6, md: 4 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                Backup Battery
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#007FFF",
-                  fontSize: 28,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <BatteryChargingFullIcon
-                  sx={{ color: "#007FFF", fontSize: 50, mr: 1 }}
-                />
-                25.00 v
-              </Typography>
-            </Grid>
-
-            <Grid item size={{xs: 12, sm: 6, md: 4 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                FDS Power Supply
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#ffe600ff",
-                  fontSize: 28,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <BoltIcon
-                  sx={{ color: "#ffe600ff", fontSize: 50, mr: 1 }}
-                />
-                Main Power
-              </Typography>
-            </Grid>
-
-                        <Grid item size={{xs: 12, sm: 6, md: 4 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                Train Location
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#ffe600ff",
-                  fontSize: 28,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <BoltIcon
-                  sx={{ color: "#ffe600ff", fontSize: 50, mr: 1 }}
-                />
-                Goto Maps
-              </Typography>
-            </Grid>
-
-          </Grid>
-        </Box>
-      </Box>
-
-
-
-      <Box
+      <Typography
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          py: 5,
+          color: "#F04A00",
+          fontSize: { xs: 17, md: 25, lg: 25 },
+          fontWeight: 600,
+          textAlign: "center",
+          width: "100%",
         }}
       >
-        <Box
-          sx={{
-            bgcolor: "transparent",
-            width: { xs: "95%", md: "85%", lg: "75%" },
-            borderRadius: 3,
-            boxShadow: "0px 0px 16px -5px #6CB4EE",
-            p: 4,
-          }}
-        >
-          {/* Train ID */}
-          <Typography
-            gutterBottom
-            sx={{
-              color: "white",
-              fontSize: 45,
-              fontWeight: 600,
-              textAlign: "center",
-              mb: 4,
-            }}
-          >
-            BE-576231
-          </Typography>
+        Primary Battery Voltage History
+      </Typography>
 
-
-
-          {/* 2x2 Grid Layout */}
-          <Grid container spacing={3}>
-            {/* 1,1 Signal Strength */}
-            <Grid item size={{xs: 12, sm: 6, md: 6 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                Signal Strength
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#09ba15ff",
-                  fontSize: 36,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <SignalCellularAltIcon
-                  sx={{ color: "#09ba15ff", fontSize: 55, mr: 1 }}
-                />
-                95%
-              </Typography>
-            </Grid>
-
-            {/* 1,2 Main Power */}
-            <Grid item size={{xs: 12, sm: 6, md: 6 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                Main Power Supply
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#09ba15ff",
-                  fontSize: 28,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <BoltIcon sx={{ color: "#09ba15ff", fontSize: 55, mr: 1 }} />
-                110v - On 
-              </Typography>
-            </Grid>
-
-            {/* 2,1 Main Battery */}
-            <Grid item size={{xs: 12, sm: 6, md: 6 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                Main Battery
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#FF5800",
-                  fontSize: 28,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <BatteryChargingFullIcon
-                  sx={{ color: "#FF5800", fontSize: 50, mr: 1 }}
-                />
-                24.00 v
-              </Typography>
-            </Grid>
-
-            {/* 2,2 Backup Battery */}
-            <Grid item size={{xs: 12, sm: 6, md: 6 }}>
-              <Typography
-                gutterBottom
-                sx={{ color: "white", fontSize: 28, textAlign: "center" }}
-              >
-                Backup Battery
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#007FFF",
-                  fontSize: 28,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <BatteryChargingFullIcon
-                  sx={{ color: "#007FFF", fontSize: 50, mr: 1 }}
-                />
-                25.00 v
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
+      <Box
+        sx={{ width: "100%", height: { xs: 200, md: 300, lg: 400 }, bgcolor: "#ffffffff", paddingRight: 2, paddingLeft: -5, marginTop:2 }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={pribatData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="time" fontSize={18}/>
+            <YAxis dataKey="volt" />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="volt"
+              stroke="#F04A00"
+              strokeWidth={3}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </Box>
 
-      
-    </Box>
+      <Typography
+        sx={{
+          color: "#0070FF",
+          fontSize: { xs: 17, md: 25, lg: 25 },
+          marginTop: 3,
+          fontWeight: 600,
+          textAlign: "center",
+          width: "100%",
+        }}
+      >
+        Backup Battery Voltage History
+      </Typography>
+
+      <Box
+        sx={{ width: "100%", height: { xs: 200, md: 300, lg: 400 }, bgcolor: "#ffffffff", paddingRight: 2, paddingLeft: -5, marginTop:2 }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={backbatData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="time" fontSize={18}/>
+            <YAxis dataKey="volt" />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="volt"
+              stroke="#0070FF"
+              strokeWidth={3}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
+
+      <Typography
+        sx={{
+          color: "#d219b9ff",
+          fontSize: { xs: 17, md: 25, lg: 25 },
+          fontWeight: 600,
+          marginTop: 3,
+          textAlign: "center",
+          width: "100%",
+        }}
+      >
+        GSM Signal History
+      </Typography>
+
+      <Box
+        sx={{ width: "100%", height: { xs: 200, md: 300, lg: 400 }, bgcolor: "#ffffffff", paddingRight: 2, paddingLeft: -5, marginTop:2 }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={signalData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="time" fontSize={18}/>
+            <YAxis dataKey="signal" />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="signal"
+              stroke="#d219b9ff"
+              strokeWidth={3}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
+    </>
   );
 };
 

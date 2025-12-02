@@ -19,7 +19,7 @@ const Appbar = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#E5E4E2",
+        backgroundColor: "#ffffffff",
         paddingBottom: 10,
     //     "&::before": {
     //   content: '""',
@@ -38,7 +38,7 @@ const Appbar = () => {
         sx={{
           borderRadius: 3,
        
-          width: { xs: "90%", md: "95%", lg: "95%" },
+          width: { xs: "95%", md: "95%", lg: "95%" },
           backgroundColor: "#3271b8", // transparent white
           top: 20, // vertical spacing from top
           left: "50%",
