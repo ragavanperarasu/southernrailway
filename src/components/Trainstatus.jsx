@@ -85,7 +85,7 @@ const Trainstatus = () => {
   const fetchData = async () => {
     //console.log("Inside fetchData function");
     try {
-      const response = await axios.get(`http://72.60.103.126/coach/${coachid}`);
+      const response = await axios.get(import.meta.env.VITE_API_URL+`coach/${coachid}`);
 
       const raw = response.data;
 
@@ -403,6 +403,7 @@ const Trainstatus = () => {
               <Marker
                 position={[product.lat, product.lng]}
                 icon={index === 0 ? redIcon : greenIcon}
+                key={index}
               >
                 <Popup>{new Date(product.createdAt).toLocaleString()}</Popup>
               </Marker>

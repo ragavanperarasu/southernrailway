@@ -48,18 +48,16 @@ const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [dataopen, setDataOpen] = useState(false);
 
-
   useEffect(() => {
     //http://localhost:5000
-    // Connect to Socket.IO server http://72.60.103.126/
-    const socket = io("http://72.60.103.126/"); // replace with your server URL
+    const socket = io(import.meta.env.VITE_API_URL); // replace with your server URL
 
     // Request data
     socket.emit("getdata");
 
     // Listen for product data
     socket.on("productData", (data) => {
-      console.log("Received data:", data);
+      //console.log("Received data:", data);
       setProducts(data);
       setLoading(false);
     });
@@ -70,7 +68,7 @@ const [loading, setLoading] = useState(true);
       setLoading(false);
     });
 
-    console.log(products);
+    //console.log(products);
     // Clean up on unmount
     return () => {
       socket.disconnect();

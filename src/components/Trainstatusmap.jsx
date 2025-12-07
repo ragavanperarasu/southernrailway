@@ -1,35 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Dialog,
-  DialogTitle,
-  Typography,
-  Box,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  CircularProgress,
-  Stack,
-} from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import Appbar from "./Appbar";
 import { useLocation, useNavigate } from "react-router-dom";
-import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
-import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
-import BoltIcon from "@mui/icons-material/Bolt";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import {
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
 import LoadingScreen from "./LoadingScreen";
 
 const position = [11.0168, 76.9558]; // Coimbatore
@@ -47,13 +23,12 @@ L.Icon.Default.mergeOptions({
 const redIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-  iconSize: [40, 65],     // increased size
-  iconAnchor: [20, 64],   // adjust anchor for correct placement
-  popupAnchor: [1, -50],  // adjust popup position
+  iconSize: [40, 65], // increased size
+  iconAnchor: [20, 64], // adjust anchor for correct placement
+  popupAnchor: [1, -50], // adjust popup position
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  shadowSize: [65, 65],   // increase shadow too
+  shadowSize: [65, 65], // increase shadow too
 });
-
 
 const greenIcon = new L.Icon({
   iconUrl:
@@ -73,73 +48,17 @@ const Trainstatusmap = () => {
   const [trainData, setTrainData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [pribatData, setPribatData] = useState([]);
-  const [backbatData, setBackbatData] = useState([]);
-  const [signalData, setSignalData] = useState([]);
-  const [comData, setComData] = useState([]);
-
   useEffect(() => {
     fetchData();
   }, [coachid]);
 
   const fetchData = async () => {
-    console.log("Inside fetchData function");
     try {
-      const response = await axios.get(`http://localhost:5000/coachloc/${coachid}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}coachloc/${coachid}`);
 
       const raw = response.data;
 
-      const combinedData = raw.map((item) => {
-        const d = new Date(item.createdAt);
-        const date = d.toISOString().split("T")[0];
-        const time = d.toLocaleTimeString();
-        const formattedTime = `${date} ${time}`;
-
-        return {
-          time: formattedTime,
-          pribat: item.pribat,
-          backbat: item.backbat,
-          signal: item.sig,
-        };
-      });
-      setComData(combinedData);
-
-      // const priData = raw.map((item) => {
-      //   const d = new Date(item.createdAt);
-      //   const date = d.toISOString().split("T")[0];
-      //   const time = d.toLocaleTimeString();
-      //   return {
-      //     time: `${date} ${time}`,
-      //     volt: item.pribat,
-      //   };
-      // });
-
-      // const backData = raw.map((item) => {
-      //   const d = new Date(item.createdAt);
-      //   const date = d.toISOString().split("T")[0];
-      //   const time = d.toLocaleTimeString();
-
-      //   return {
-      //     time: `${date} ${time}`,
-      //     volt: item.backbat,
-      //   };
-      // });
-
-      // const signalData = raw.map((item) => {
-      //   const d = new Date(item.createdAt);
-      //   const date = d.toISOString().split("T")[0];
-      //   const time = d.toLocaleTimeString();
-
-      //   return {
-      //     time: `${date} ${time}`,
-      //     signal: item.sig,
-      //   };
-      // });
-
       setTrainData(raw);
-      // setPribatData(priData);
-      // setBackbatData(backData);
-      // setSignalData(signalData);
     } catch (error) {
       console.error("Error fetching train status data:", error);
     } finally {
@@ -174,39 +93,38 @@ const Trainstatusmap = () => {
         Coach History - {coachid} (Last 13 Hours)
       </Typography>
 
-
-
-        <Box
-          sx={{
-            width: "100%",
-            height: "100vh",
-            borderRadius: 2,
-            overflow: "hidden",
-            boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-          }}
+      <Box
+        sx={{
+          width: "100%",
+          height: "100vh",
+          borderRadius: 2,
+          overflow: "hidden",
+          boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+        }}
+      >
+        <MapContainer
+          center={
+            trainData[0] ? [trainData[0].lat, trainData[0].lng] : position
+          }
+          zoom={9}
+          style={{ width: "100%", height: "100%" }}
         >
-          <MapContainer
-            center={
-              trainData[0] ? [trainData[0].lat, trainData[0].lng] : position
-            }
-            zoom={9}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-            />
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+          />
 
-            {trainData.map((product, index) => (
-              <Marker
-                position={[product.lat, product.lng]}
-                icon={index === 0 ? redIcon : greenIcon}
-              >
-                <Popup>{new Date(product.createdAt).toLocaleString()}</Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </Box>
+          {trainData.map((product, index) => (
+            <Marker
+              position={[product.lat, product.lng]}
+              icon={index === 0 ? redIcon : greenIcon}
+              key={index}
+            >
+              <Popup>{new Date(product.createdAt).toLocaleString()}</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      </Box>
     </>
   );
 };
