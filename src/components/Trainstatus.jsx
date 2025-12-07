@@ -100,6 +100,21 @@ const Trainstatus = () => {
     }
   };
 
+    const fetchData2 = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}coachloc/${coachid}`);
+  
+        const raw = response.data;
+  
+        setTrainData(raw);
+      } catch (error) {
+        console.error("Error fetching train status data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
   if (loading) {
     return (
       <>
@@ -250,9 +265,8 @@ const Trainstatus = () => {
                     borderRadius: "8px",
                     fontWeight: 600,
                   }}
-                  onClick={() =>
-                    navigate("/trainstatusmap", { state: { coachid } })
-                  }
+                  onClick={fetchData2}
+                  
                 >
                   Show Full History
                 </Button>
@@ -275,7 +289,7 @@ const Trainstatus = () => {
                       ? [trainData[0].lat, trainData[0].lng]
                       : position
                   }
-                  zoom={12}
+                  zoom={7}
                   style={{ width: "100%", height: "100%" }}
                 >
                   <TileLayer

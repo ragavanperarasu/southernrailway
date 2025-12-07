@@ -514,7 +514,7 @@ if (loading) {
 
           </Grid>
 
-          <Grid container sx={{ width: { xs: "100%", md: "50%", lg: "45%" } }}>
+          <Grid container sx={{ width: { xs: "100%", md: "50%", lg: "45%" }, bgcolors: "#ffffffff" }}>
             <Box
               sx={{
                 width: "100%",
