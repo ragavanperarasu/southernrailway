@@ -435,7 +435,7 @@ if (loading) {
             >
               <MapContainer
                 center={position}
-                zoom={13}
+                zoom={7}
                 style={{ width: "100%", height: "100%" }}
               >
                 <TileLayer
