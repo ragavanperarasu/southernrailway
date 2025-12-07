@@ -25,13 +25,13 @@ const Appbar = () => {
         }}
       >
         <Toolbar>
-          <DirectionsSubwayIcon />
+          <DirectionsSubwayIcon sx={{ fontSize: { xs: 30, md: 30, lg: 35 } }}/>
           <Typography
             variant="h6"
             component="div"
             sx={{ flexGrow: 1, paddingLeft: 1, fontSize: { xs: 20, md: 27, lg: 27 }}}
-            // gutterBottom
-             //onClick={()=>navigate("/")}
+             gutterBottom
+             onClick={()=>navigate("/")}
           >
             Southern Railway
           </Typography>

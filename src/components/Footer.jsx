@@ -14,24 +14,15 @@ import EmailIcon from '@mui/icons-material/Email';
 
 const Footer = () => {
   return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        paddingTop: 3,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#ffffffff",
-        paddingBottom: 5,
-      }}
-    >
+
       <CardContent
-        position="static"
+        position="absolute"
         sx={{
-          borderRadius: 3,
-          width: { xs: "95%", md: "95%", lg: "95%" },
+          marginTop: 5,
+         // borderRadius: 3,
+          //width: { xs: "95%", md: "95%", lg: "95%" },
           backgroundColor: "#3271b8", // transparent white
-          boxShadow:"rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset"
+          //boxShadow:"rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset"
           
         }}
       >
@@ -83,12 +74,11 @@ const Footer = () => {
             fontFamily: "Roboto Slab",
           }}
         >
-          Privacy Policy • Terms of Service
-          <br />
+          This is not the official Southern Railway website. A GCT student made this only for a project.
+          <br /><br />
           Copyright &copy; Sitemark 2025
         </Typography>
       </CardContent>
-    </Box>
   );
 };
 

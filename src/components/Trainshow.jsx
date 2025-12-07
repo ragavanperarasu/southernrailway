@@ -169,7 +169,7 @@ if (loading) {
                   width: "100%",
                 }}
               >
-                Fault Detected
+                Fault Detected - Below 20v
               </Typography>
 
 
@@ -261,10 +261,10 @@ if (loading) {
                   width: "100%",
                 }}
               >
-                Needs Inspection
+                Needs Inspection - 20v to 23v
               </Typography>
               {products
-                .filter((product) => product.pribat === 20)
+                .filter((product) => product.pribat >= 20 && product.pribat <= 23)
                 .map((product, index) => (
                   <Grid
                   key={index}
@@ -348,16 +348,15 @@ if (loading) {
                   color: "#36454F",
                   fontSize: 20,
                   fontWeight: 600,
-
                   mb: -5,
                   width: "100%",
                 }}
               >
-                Working Fine
+                Working Fine - Above 23v
               </Typography>
 
               {products
-                .filter((product) => product.pribat > 20)
+                .filter((product) => product.pribat > 23)
                 .map((product, index) => (
                   <Grid
                   key={index}

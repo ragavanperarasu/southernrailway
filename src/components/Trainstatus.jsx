@@ -27,7 +27,8 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer, Legend
+  ResponsiveContainer,
+  Legend,
 } from "recharts";
 import LoadingScreen from "./LoadingScreen";
 
@@ -41,6 +42,27 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
   shadowUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+});
+
+const redIcon = new L.Icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+  iconSize: [40, 65],     // increased size
+  iconAnchor: [20, 64],   // adjust anchor for correct placement
+  popupAnchor: [1, -50],  // adjust popup position
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  shadowSize: [65, 65],   // increase shadow too
+});
+
+
+const greenIcon = new L.Icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  shadowSize: [41, 41],
 });
 
 const Trainstatus = () => {
@@ -125,14 +147,14 @@ const Trainstatus = () => {
     }
   };
 
-if (loading) {
-  return (
-    <>
-      <Appbar />
-      <LoadingScreen />
-    </>
-  );
-}
+  if (loading) {
+    return (
+      <>
+        <Appbar />
+        <LoadingScreen />
+      </>
+    );
+  }
 
   return (
     <>
@@ -146,57 +168,55 @@ if (loading) {
           textAlign: "center",
           width: "100%",
           marginBottom: 2,
+          marginTop: 12,
         }}
       >
         Coach History - {coachid}
       </Typography>
 
       <Box
-  sx={{
-    width: "100%",
-    height: { xs: 350, md: 350, lg: 450 },
-    bgcolor: "#ffffff",
-    paddingRight: 2,
-    marginTop: 2,
-  }}
->
-  <ResponsiveContainer width="100%" height="100%">
-    <LineChart data={comData}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="time" />
-      <YAxis />
-      <Tooltip />
-      <Legend verticalAlign="top" align="center"/>
+        sx={{
+          width: "100%",
+          height: { xs: 350, md: 350, lg: 450 },
+          bgcolor: "#ffffff",
+          paddingRight: 2,
+          marginTop: 2,
+        }}
+      >
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={comData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="time" />
+            <YAxis />
+            <Tooltip />
+            <Legend verticalAlign="top" align="center" />
 
+            <Line
+              type="monotone"
+              dataKey="pribat"
+              stroke="#F04A00" // Primary battery
+              strokeWidth={3}
+              name="Primary Battery"
+            />
 
+            <Line
+              type="monotone"
+              dataKey="backbat"
+              stroke="#0070FF" // Backup battery
+              strokeWidth={3}
+              name="Backup Battery"
+            />
 
-      <Line
-        type="monotone"
-        dataKey="pribat"
-        stroke="#F04A00"     // Primary battery
-        strokeWidth={3}
-        name="Primary Battery"
-      />
-
-      <Line
-        type="monotone"
-        dataKey="backbat"
-        stroke="#0070FF"     // Backup battery
-        strokeWidth={3}
-        name="Backup Battery"
-      />
-
-      <Line
-        type="monotone"
-        dataKey="signal"
-        stroke="#d219b9ff"   // GSM Signal
-        strokeWidth={3}
-        name="GSM Signal"
-      />
-    </LineChart>
-  </ResponsiveContainer>
-</Box>
-
+            <Line
+              type="monotone"
+              dataKey="signal"
+              stroke="#d219b9ff" // GSM Signal
+              strokeWidth={3}
+              name="GSM Signal"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
 
       {/* <Typography
         sx={{
@@ -347,7 +367,9 @@ if (loading) {
           }}
         >
           <MapContainer
-            center={trainData[0] ? [trainData[0].lat, trainData[0].lng] : position}
+            center={
+              trainData[0] ? [trainData[0].lat, trainData[0].lng] : position
+            }
             zoom={12}
             style={{ width: "100%", height: "100%" }}
           >
@@ -357,7 +379,10 @@ if (loading) {
             />
 
             {trainData.map((product, index) => (
-              <Marker position={[product.lat, product.lng]} key={index}>
+              <Marker
+                position={[product.lat, product.lng]}
+                icon={index === 0 ? redIcon : greenIcon}
+              >
                 <Popup>{new Date(product.createdAt).toLocaleString()}</Popup>
               </Marker>
             ))}
