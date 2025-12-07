@@ -34,6 +34,8 @@ const getSignalInfo = (sig) => {
   return { label: "No Signal", color: "#888888" };
 };
 
+const position = [11.0168, 76.9558]; // Coimbatore
+
 const Trainshow = () => {
   const navigate = useNavigate();
 
@@ -73,7 +75,7 @@ const [loading, setLoading] = useState(true);
     };
   }, []);
 
-  const position = [11.0168, 76.9558]; // Coimbatore
+  
 
   function showProductDialog(p){
     setDataOpen(p)
