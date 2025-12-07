@@ -90,7 +90,7 @@ const Trainstatusmap = () => {
           marginTop: 12,
         }}
       >
-        Coach History - {coachid} (Last 13 Hours)
+        Coach History - {coachid}
       </Typography>
 
       <Box
