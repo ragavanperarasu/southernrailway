@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from "react";
 import {
   Button,
-  Dialog,
-  DialogTitle,
   Typography,
   Box,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
   CircularProgress,
-  Stack,
+  Grid, // Added Grid
+  Paper, // Added Paper for better container styling
 } from "@mui/material";
 import Appbar from "./Appbar";
 import { useLocation, useNavigate } from "react-router-dom";
-import SignalCellularAltIcon from "@mui/icons-material/SignalCellularAlt";
-import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
-import BoltIcon from "@mui/icons-material/Bolt";
 import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
@@ -47,13 +40,12 @@ L.Icon.Default.mergeOptions({
 const redIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-  iconSize: [40, 65],     // increased size
-  iconAnchor: [20, 64],   // adjust anchor for correct placement
-  popupAnchor: [1, -50],  // adjust popup position
+  iconSize: [40, 65],
+  iconAnchor: [20, 64],
+  popupAnchor: [1, -50],
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  shadowSize: [65, 65],   // increase shadow too
+  shadowSize: [65, 65],
 });
-
 
 const greenIcon = new L.Icon({
   iconUrl:
@@ -72,10 +64,6 @@ const Trainstatus = () => {
 
   const [trainData, setTrainData] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const [pribatData, setPribatData] = useState([]);
-  const [backbatData, setBackbatData] = useState([]);
-  const [signalData, setSignalData] = useState([]);
   const [comData, setComData] = useState([]);
 
   useEffect(() => {
@@ -83,9 +71,10 @@ const Trainstatus = () => {
   }, [coachid]);
 
   const fetchData = async () => {
-    //console.log("Inside fetchData function");
     try {
-      const response = await axios.get(import.meta.env.VITE_API_URL+`coach/${coachid}`);
+      const response = await axios.get(
+        import.meta.env.VITE_API_URL + `coach/${coachid}`
+      );
 
       const raw = response.data;
 
@@ -103,43 +92,7 @@ const Trainstatus = () => {
         };
       });
       setComData(combinedData);
-
-      // const priData = raw.map((item) => {
-      //   const d = new Date(item.createdAt);
-      //   const date = d.toISOString().split("T")[0];
-      //   const time = d.toLocaleTimeString();
-      //   return {
-      //     time: `${date} ${time}`,
-      //     volt: item.pribat,
-      //   };
-      // });
-
-      // const backData = raw.map((item) => {
-      //   const d = new Date(item.createdAt);
-      //   const date = d.toISOString().split("T")[0];
-      //   const time = d.toLocaleTimeString();
-
-      //   return {
-      //     time: `${date} ${time}`,
-      //     volt: item.backbat,
-      //   };
-      // });
-
-      // const signalData = raw.map((item) => {
-      //   const d = new Date(item.createdAt);
-      //   const date = d.toISOString().split("T")[0];
-      //   const time = d.toLocaleTimeString();
-
-      //   return {
-      //     time: `${date} ${time}`,
-      //     signal: item.sig,
-      //   };
-      // });
-
       setTrainData(raw);
-      // setPribatData(priData);
-      // setBackbatData(backData);
-      // setSignalData(signalData);
     } catch (error) {
       console.error("Error fetching train status data:", error);
     } finally {
@@ -157,9 +110,10 @@ const Trainstatus = () => {
   }
 
   return (
-    <>
+    <Box sx={{ bgcolor: "#ffffffff", minHeight: "100vh", pb: 4 }}>
       <Appbar />
 
+      {/* Main Page Title */}
       <Typography
         sx={{
           color: "#00A693",
@@ -174,244 +128,179 @@ const Trainstatus = () => {
         Coach History - {coachid}
       </Typography>
 
-      <Box
-        sx={{
-          width: "100%",
-          height: { xs: 350, md: 350, lg: 450 },
-          bgcolor: "#ffffff",
-          paddingRight: 2,
-          marginTop: 2,
-        }}
-      >
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={comData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" />
-            <YAxis />
-            <Tooltip />
-            <Legend verticalAlign="top" align="center" />
-
-            <Line
-              type="monotone"
-              dataKey="pribat"
-              stroke="#F04A00" // Primary battery
-              strokeWidth={3}
-              name="Primary Battery"
-            />
-
-            <Line
-              type="monotone"
-              dataKey="backbat"
-              stroke="#0070FF" // Backup battery
-              strokeWidth={3}
-              name="Backup Battery"
-            />
-
-            {/* <Line
-              type="monotone"
-              dataKey="signal"
-              stroke="#d219b9ff" // GSM Signal
-              strokeWidth={3}
-              name="GSM Signal"
-            /> */}
-          </LineChart>
-        </ResponsiveContainer>
-      </Box>
-
-      {/* <Typography
-        sx={{
-          color: "#F04A00",
-          fontSize: { xs: 17, md: 25, lg: 25 },
-          fontWeight: 600,
-          textAlign: "center",
-          width: "100%",
-        }}
-      >
-        Primary Battery Voltage History
-      </Typography>
-
-      <Box
-        sx={{
-          width: "100%",
-          height: { xs: 200, md: 300, lg: 400 },
-          bgcolor: "#ffffffff",
-          paddingRight: 2,
-          paddingLeft: -5,
-          marginTop: 2,
-        }}
-      >
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={pribatData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" fontSize={18} />
-            <YAxis dataKey="volt" />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="volt"
-              stroke="#F04A00"
-              strokeWidth={3}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </Box>
-
-      <Typography
-        sx={{
-          color: "#0070FF",
-          fontSize: { xs: 17, md: 25, lg: 25 },
-          marginTop: 3,
-          fontWeight: 600,
-          textAlign: "center",
-          width: "100%",
-        }}
-      >
-        Backup Battery Voltage History
-      </Typography>
-
-      <Box
-        sx={{
-          width: "100%",
-          height: { xs: 200, md: 300, lg: 400 },
-          bgcolor: "#ffffffff",
-          paddingRight: 2,
-          paddingLeft: -5,
-          marginTop: 2,
-        }}
-      >
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={backbatData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" fontSize={18} />
-            <YAxis dataKey="volt" />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="volt"
-              stroke="#0070FF"
-              strokeWidth={3}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </Box>*/}
-
-      <Typography
-        sx={{
-          color: "#d219b9ff",
-          fontSize: { xs: 17, md: 25, lg: 25 },
-          fontWeight: 600,
-          marginTop: 3,
-          textAlign: "center",
-          width: "100%",
-        }}
-      >
-        GSM Signal History
-      </Typography>
-
-      <Box
-        sx={{
-          width: "100%",
-          height: { xs: 200, md: 300, lg: 400 },
-          bgcolor: "#ffffffff",
-          paddingRight: 2,
-          paddingLeft: -5,
-          marginTop: 2,
-        }}
-      >
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={comData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" fontSize={18} />
-            <YAxis dataKey="signal" />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="signal"
-              stroke="#d219b9ff"
-              strokeWidth={3}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </Box> 
-
-      <Typography
-        sx={{
-          color: "#0070FF",
-          fontSize: { xs: 17, md: 25, lg: 25 },
-          fontWeight: 600,
-          marginTop: 3,
-          textAlign: "center",
-          width: "100%",
-        }}
-      >
-        Location History
-      </Typography>
-
-
-<Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-  <Button
-    variant="contained"
-    sx={{
-      mt: 1,
-      mb: 2,
-      backgroundColor: "#0070FF",
-      textTransform: "none",
-      borderRadius: "10px",
-      fontWeight: 600,
-      px: 3,
-      py: 1,
-    }}
-    onClick={() => navigate("/trainstatusmap", { state: { coachid } })}
-  >
-    Show Full History
-  </Button>
-</Box>
-
-
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          marginTop: 20,
-          marginBottom: 4,
-        }}
-      >
-        <Box
-          sx={{
-            width: "80%",
-            height: "90vh",
-            borderRadius: 2,
-            overflow: "hidden",
-            boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-          }}
-        >
-          <MapContainer
-            center={
-              trainData[0] ? [trainData[0].lat, trainData[0].lng] : position
-            }
-            zoom={12}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-            />
-
-            {trainData.map((product, index) => (
-              <Marker
-                position={[product.lat, product.lng]}
-                icon={index === 0 ? redIcon : greenIcon}
-                key={index}
+      {/* Grid Layout: Left (Charts) - Right (Map) */}
+      <Box>
+        <Grid container spacing={2} sx={{display:'flex', justifyContent:'center'}}>
+          
+          {/* LEFT COLUMN: GRAPHS */}
+          <Grid item sx={{width:{ xs: '95%', md: '48%', lg: '48%' }}}>
+            
+            {/* Battery Chart */}
+            <Paper sx={{ p: 2, borderRadius: 2, borderColor: "#000", borderWidth: 1, borderStyle: 'solid', mb: 2 }} >
+              <Typography
+                sx={{
+                  color: "#000",
+                  fontSize: 18,
+                  fontWeight: 600,
+                  mb: 2,
+                  textAlign: "center",
+                }}
               >
-                <Popup>{new Date(product.createdAt).toLocaleString()}</Popup>
-              </Marker>
-            ))}
-          </MapContainer>
-        </Box>
+                Battery Voltage History
+              </Typography>
+              <Box sx={{ width: "100%", height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={comData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" hide />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend verticalAlign="top" align="center" />
+                    <Line
+                      type="monotone"
+                      dataKey="pribat"
+                      stroke="#F04A00"
+                      strokeWidth={3}
+                      name="Primary Battery"
+                      dot={false}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="backbat"
+                      stroke="#0070FF"
+                      strokeWidth={3}
+                      name="Backup Battery"
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Box>
+            </Paper>
+
+            {/* Signal Chart */}
+            <Paper sx={{ p: 2, borderRadius: 2, borderColor: "#d219b9ff", borderWidth: 1, borderStyle: 'solid' }} >
+              <Typography
+                sx={{
+                  color: "#d219b9ff",
+                  fontSize: 18,
+                  fontWeight: 600,
+                  mb: 2,
+                  textAlign: "center",
+                }}
+              >
+                GSM Signal History
+              </Typography>
+              <Box sx={{ width: "100%", height: 300 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={comData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="time" fontSize={12} />
+                    <YAxis dataKey="signal" />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="signal"
+                      stroke="#d219b9ff"
+                      strokeWidth={3}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </Box>
+            </Paper>
+          </Grid>
+
+          {/* RIGHT COLUMN: MAP */}
+          <Grid item sx={{width:{ xs: '95%', md: '48%', lg: '48%' }}}>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                height: "100%", // Fills the height of the column
+                display: "flex",
+                flexDirection: "column",
+                 borderColor: "#0070FF", borderWidth: 1, borderStyle: 'solid'
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                  flexWrap: "wrap",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#0070FF",
+                    fontSize: { xs: 18, md: 22 },
+                    fontWeight: 600,
+                  }}
+                >
+                  Location History
+                </Typography>
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    backgroundColor: "#0070FF",
+                    textTransform: "none",
+                    borderRadius: "8px",
+                    fontWeight: 600,
+                  }}
+                  onClick={() =>
+                    navigate("/trainstatusmap", { state: { coachid } })
+                  }
+                >
+                  Show Full History
+                </Button>
+              </Box>
+
+              {/* Map Container */}
+              <Box
+                sx={{
+                  flexGrow: 1, // Takes remaining vertical space
+                  minHeight: "500px", // Minimum height for map
+                  width: "100%",
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  border: "1px solid #e0e0e0",
+                }}
+              >
+                <MapContainer
+                  center={
+                    trainData[0]
+                      ? [trainData[0].lat, trainData[0].lng]
+                      : position
+                  }
+                  zoom={12}
+                  style={{ width: "100%", height: "100%" }}
+                >
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+                  />
+
+                  {trainData.map((product, index) => (
+                    <Marker
+                      position={[product.lat, product.lng]}
+                      icon={index === 0 ? redIcon : greenIcon}
+                      key={index}
+                    >
+                      <Popup>
+                        {new Date(product.createdAt).toLocaleString()}
+                      </Popup>
+                    </Marker>
+                  ))}
+                </MapContainer>
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
       </Box>
-    </>
+    </Box>
   );
 };
 
