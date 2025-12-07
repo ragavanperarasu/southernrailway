@@ -100,11 +100,11 @@ if (loading) {
         <DialogTitle>{dataopen?.coachid}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Main Battery : {dataopen?.pribat}v<br/>
+            Primary Battery : {dataopen?.pribat}v<br/>
             Backup Battery : {dataopen?.backbat}v<br/>
             Signal Strength : {dataopen ? getSignalInfo(dataopen.sig).label : ''} ({dataopen.sig})<br/>
             Primary Power (110V) : {dataopen?.pripow ? "On" : "Off"}<br/>
-            Maintainance Mode : {dataopen?.maintainance ? "On" : "Off"}<br/>
+            Maintenance Mode : {dataopen?.maintainance ? "On" : "Off"}<br/>
             Latitude : {dataopen?.lat}<br/>
             Longitude : {dataopen?.lng}<br/>
             Last Updated : {dataopen ? new Date(dataopen.updatedAt).toLocaleString() : ''}
@@ -161,17 +161,17 @@ if (loading) {
                 gutterBottom
                 sx={{
                   color: "#36454F",
-                  fontSize: 20,
+                  fontSize: { xs: 17, md: 20, lg: 20 },
                   fontWeight: 600,
                   mb: -5,
                   width: "100%",
                 }}
               >
-                Fault Detected - Below 20v
+                Fault Detected - Primary Battery &lt; 20v
               </Typography>
 
 
-              {products.filter((product) => product.pribat < 20).map((product, index) => (
+              {products.filter((product) => product.pribat < 20 && product.maintainance === false).map((product, index) => (
                   <Grid
                   key={index}
                     item
@@ -185,7 +185,7 @@ if (loading) {
                       gutterBottom
                       sx={{
                         color: "white",
-                        fontSize: 18,
+                        fontSize: { xs: 17, md: 20, lg: 20 },
                         fontWeight: 600,
                         textAlign: "center",
                         mb: 1,
@@ -204,7 +204,7 @@ if (loading) {
                         mb: 1,
                       }}
                     >
-                      Updated : {" "}
+                      Last Update : {" "}
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
@@ -212,19 +212,19 @@ if (loading) {
                       gutterBottom
                       sx={{
                         color: "white",
-                        fontSize: 16,
+                        fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
                     >
-                      Main Battery: {product.pribat}v
+                      Primary Battery: {product.pribat}v
                     </Typography>
 
                     <Typography
                       gutterBottom
                       sx={{
                         color: "white",
-                        fontSize: 16,
+                        fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
@@ -252,17 +252,17 @@ if (loading) {
                 gutterBottom
                 sx={{
                   color: "#36454F",
-                  fontSize: 20,
+                  fontSize: { xs: 17, md: 20, lg: 20 },
                   fontWeight: 600,
 
                   mb: -5,
                   width: "100%",
                 }}
               >
-                Needs Inspection - 20v to 23v
+                Needs Inspection - 20v &gt; Primary Battery &gt; 23v
               </Typography>
               {products
-                .filter((product) => product.pribat >= 20 && product.pribat <= 23)
+                .filter((product) => product.pribat >= 20 && product.pribat <= 23 && product.maintainance === false)
                 .map((product, index) => (
                   <Grid
                   key={index}
@@ -277,7 +277,7 @@ if (loading) {
                       gutterBottom
                       sx={{
                         color: "white",
-                        fontSize: 20,
+                        fontSize: { xs: 17, md: 20, lg: 20 },
                         fontWeight: 600,
                         textAlign: "center",
                         mb: 1,
@@ -297,7 +297,7 @@ if (loading) {
                         mb: 1,
                       }}
                     >
-                      Updated : {" "}
+                      Last Update : {" "}
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
@@ -305,19 +305,19 @@ if (loading) {
                       gutterBottom
                       sx={{
                         color: "white",
-                        fontSize: 16,
+                        fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
                     >
-                      Main Battery: {product.pribat}v
+                      Primary Battery: {product.pribat}v
                     </Typography>
 
                     <Typography
                       gutterBottom
                       sx={{
                         color: "white",
-                        fontSize: 16,
+                        fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
@@ -344,17 +344,17 @@ if (loading) {
                 gutterBottom
                 sx={{
                   color: "#36454F",
-                  fontSize: 20,
+                  fontSize: { xs: 17, md: 20, lg: 20 },
                   fontWeight: 600,
                   mb: -5,
                   width: "100%",
                 }}
               >
-                Working Fine - Above 23v
+                Working Fine - Primary Battery &gt; 23v
               </Typography>
 
               {products
-                .filter((product) => product.pribat > 23)
+                .filter((product) => product.pribat > 23 && product.maintainance === false)
                 .map((product, index) => (
                   <Grid
                   key={index}
@@ -369,7 +369,7 @@ if (loading) {
                       gutterBottom
                       sx={{
                         color: "white",
-                        fontSize: 20,
+                        fontSize: { xs: 17, md: 20, lg: 20 },
                         fontWeight: 600,
                         textAlign: "center",
                         mb: 1,
@@ -388,7 +388,7 @@ if (loading) {
                         mb: 1,
                       }}
                     >
-                      Updated : {" "}
+                      Last Update : {" "}
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
@@ -396,19 +396,19 @@ if (loading) {
                       gutterBottom
                       sx={{
                         color: "white",
-                        fontSize: 16,
+                        fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
                     >
-                      Main Battery: {product.pribat}v
+                      Primary Battery: {product.pribat}v
                     </Typography>
 
                     <Typography
                       gutterBottom
                       sx={{
                         color: "white",
-                        fontSize: 16,
+                        fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
@@ -419,6 +419,99 @@ if (loading) {
                   </Grid>
                 ))}
             </Grid>
+
+
+<Grid
+              container
+              spacing={5}
+              sx={{
+                bgcolor: "#8C92AC",
+                padding: 2,
+                borderRadius: 3,
+                minHeight: 140,
+                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+              }}
+            >
+              <Typography
+                gutterBottom
+                sx={{
+                  color: "#36454F",
+                  fontSize: { xs: 17, md: 20, lg: 20 },
+                  fontWeight: 600,
+                  mb: -5,
+                  width: "100%",
+                }}
+              >
+                Maintenance Mode
+              </Typography>
+
+              {products
+                .filter((product) => product.maintainance === true)
+                .map((product, index) => (
+                  <Grid
+                  key={index}
+                    item
+                    xs={12}
+                    md={4}
+                    lg={3}
+                    sx={{ bgcolor: "#007FFF", padding: 1, borderRadius: 2 }}
+                    onClick={() => showProductDialog(product)}
+                  >
+                    <Typography
+                      gutterBottom
+                      sx={{
+                        color: "white",
+                        fontSize: { xs: 17, md: 20, lg: 20 },
+                        fontWeight: 600,
+                        textAlign: "center",
+                        mb: 1,
+                      }}
+                    >
+                      {product.coachid}
+                    </Typography>
+
+                    <Typography
+                      gutterBottom
+                      sx={{
+                        color: "white",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        textAlign: "center",
+                        mb: 1,
+                      }}
+                    >
+                      Last Update : {" "}
+                      {new Date(product.updatedAt).toLocaleString()}
+                    </Typography>
+
+                    <Typography
+                      gutterBottom
+                      sx={{
+                        color: "white",
+                        fontSize: { xs: 14, md: 16, lg: 16 },
+                        fontWeight: 600,
+                        mb: 1,
+                      }}
+                    >
+                      Primary Battery: {product.pribat}v
+                    </Typography>
+
+                    <Typography
+                      gutterBottom
+                      sx={{
+                        color: "white",
+                        fontSize: { xs: 14, md: 16, lg: 16 },
+                        fontWeight: 600,
+                        mb: 1,
+                      }}
+                    >
+                      Backup Battery: {product.backbat}v
+                    </Typography>
+
+                  </Grid>
+                ))}
+            </Grid>
+
           </Grid>
 
           <Grid container sx={{ width: { xs: "100%", md: "50%", lg: "45%" } }}>
