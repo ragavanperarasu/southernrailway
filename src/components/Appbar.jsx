@@ -12,37 +12,16 @@ const Appbar = () => {
   const navigate = useNavigate();
 
   return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        paddingTop: 3,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#ffffffff",
-        paddingBottom: 10,
-    //     "&::before": {
-    //   content: '""',
-    //   position: "absolute",
-    //   top: 0,
-    //   left: 0,
-    //   width: "100%",
-    //   height: "200px", // gradient height
-    //   background: "linear-gradient(to bottom, rgba(0, 112, 255, 0.45), transparent)", 
-    //   pointerEvents: "none", // prevent blocking clicks
-    // },
-      }}
-    >
+
       <AppBar
-        position="fixed"
+        position="absolute"
         sx={{
-          borderRadius: 3,
-       
-          width: { xs: "95%", md: "95%", lg: "95%" },
+          //borderRadius: 3,
+          //width: { xs: "95%", md: "95%", lg: "95%" },
           backgroundColor: "#3271b8", // transparent white
-          top: 20, // vertical spacing from top
-          left: "50%",
-          transform: "translateX(-50%)", // ✅ centers horizontally
+          //top: 20, // vertical spacing from top
+          //left: "50%",
+          //transform: "translateX(-50%)", // ✅ centers horizontally
         }}
       >
         <Toolbar>
@@ -50,9 +29,9 @@ const Appbar = () => {
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, paddingLeft: 1}}
+            sx={{ flexGrow: 1, paddingLeft: 1, fontSize: { xs: 20, md: 27, lg: 27 }}}
             // gutterBottom
-            // onClick={()=>navigate("/")}
+             //onClick={()=>navigate("/")}
           >
             Southern Railway
           </Typography>
@@ -64,7 +43,7 @@ const Appbar = () => {
           </Button> */}
         </Toolbar>
       </AppBar>
-    </Box>
+
   );
 };
 

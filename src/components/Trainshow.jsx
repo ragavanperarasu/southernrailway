@@ -14,6 +14,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+import LoadingScreen from "./LoadingScreen";
+
 
 // Fix default marker issue using CDN URLs (no local images needed)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -82,18 +84,14 @@ const [loading, setLoading] = useState(true);
     setOpen(true)
   }
 
-  if (loading) {
-    return (<Box sx={{ bgcolor: "#E5E4E2", minHeight: "100vh", height: "100%" }}>
+if (loading) {
+  return (
+    <>
       <Appbar />
-      <Typography variant="h5" sx={{ textAlign: "center", mt: 10 }}>Fetching Data...</Typography>
-     
-
-      <Stack spacing={2} direction="row" alignItems="center" justifyContent="center" sx={{ mt: 5 }}>
-      <CircularProgress enableTrackSlot size="3rem" />
-      </Stack>
-      
-    </Box>);
-  }
+      <LoadingScreen />
+    </>
+  );
+}
 
 
   return (
@@ -130,6 +128,7 @@ const [loading, setLoading] = useState(true);
           justifyContent: "center",
           alignItems: "center",
           width: "100%",
+          marginTop: 13,
         }}
       >
         <Grid

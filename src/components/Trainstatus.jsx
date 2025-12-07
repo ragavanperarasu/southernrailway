@@ -29,6 +29,7 @@ import {
   Tooltip,
   ResponsiveContainer, Legend
 } from "recharts";
+import LoadingScreen from "./LoadingScreen";
 
 const position = [11.0168, 76.9558]; // Coimbatore
 
@@ -124,26 +125,14 @@ const Trainstatus = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ bgcolor: "#E5E4E2", minHeight: "100vh", height: "100%" }}>
-        <Appbar />
-        <Typography variant="h5" sx={{ textAlign: "center", mt: 10 }}>
-          Fetching Data...
-        </Typography>
-
-        <Stack
-          spacing={2}
-          direction="row"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ mt: 5 }}
-        >
-          <CircularProgress enableTrackSlot size="3rem" />
-        </Stack>
-      </Box>
-    );
-  }
+if (loading) {
+  return (
+    <>
+      <Appbar />
+      <LoadingScreen />
+    </>
+  );
+}
 
   return (
     <>
