@@ -6,7 +6,16 @@ import { useNavigate } from "react-router-dom";
 
 import Footer from "./Footer";
 import { Grid, Paper } from "@mui/material";
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CircularProgress, Stack } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  CircularProgress,
+  Stack,
+} from "@mui/material";
 
 import { io } from "socket.io-client";
 
@@ -15,7 +24,6 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 import LoadingScreen from "./LoadingScreen";
-
 
 // Fix default marker issue using CDN URLs (no local images needed)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -32,7 +40,8 @@ const getSignalInfo = (sig) => {
   if (sig >= 0 && sig <= 9) return { label: "Weak Signal", color: "#FF0000" };
   if (sig >= 10 && sig <= 14) return { label: "Fair Signal", color: "#FFA500" };
   if (sig >= 15 && sig <= 19) return { label: "Good Signal", color: "#FFFF00" };
-  if (sig >= 20 && sig <= 30) return { label: "Excellent Signal", color: "#3FFF00" };
+  if (sig >= 20 && sig <= 30)
+    return { label: "Excellent Signal", color: "#3FFF00" };
   return { label: "No Signal", color: "#888888" };
 };
 
@@ -43,10 +52,33 @@ const Trainshow = () => {
 
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
-const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const [open, setOpen] = useState(false);
   const [dataopen, setDataOpen] = useState(false);
+
+  const [maintCount, setMaintCount] = useState(0);
+  const [faultCount, setFaultCount] = useState(0);
+  const [inspectCount, setInspectCount] = useState(0);
+  const [normalCount, setNormalCount] = useState(0);
+
+  useEffect(() => {
+    const mainc = products.filter((p) => p.maintainance === true).length;
+    const fault = products.filter(
+      (p) => p.pribat < 20 && p.maintainance === false
+    ).length;
+    const inspect = products.filter(
+      (p) => p.pribat >= 20 && p.pribat <= 23 && p.maintainance === false
+    ).length;
+    const normal = products.filter(
+      (p) => p.pribat > 23 && p.maintainance === false
+    ).length;
+
+    setNormalCount(normal);
+    setInspectCount(inspect);
+    setMaintCount(mainc);
+    setFaultCount(fault);
+  }, [products]);
 
   useEffect(() => {
     //http://localhost:5000
@@ -75,22 +107,19 @@ const [loading, setLoading] = useState(true);
     };
   }, []);
 
-  
-
-  function showProductDialog(p){
-    setDataOpen(p)
-    setOpen(true)
+  function showProductDialog(p) {
+    setDataOpen(p);
+    setOpen(true);
   }
 
-if (loading) {
-  return (
-    <>
-      <Appbar />
-      <LoadingScreen />
-    </>
-  );
-}
-
+  if (loading) {
+    return (
+      <>
+        <Appbar />
+        <LoadingScreen />
+      </>
+    );
+  }
 
   return (
     <Box sx={{ bgcolor: "#ffffffff", minHeight: "100vh", height: "100%" }}>
@@ -100,25 +129,203 @@ if (loading) {
         <DialogTitle>{dataopen?.coachid}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Primary Battery : {dataopen?.pribat}v<br/>
-            Backup Battery : {dataopen?.backbat}v<br/>
-            Signal Strength : {dataopen ? getSignalInfo(dataopen.sig).label : ''} ({dataopen.sig})<br/>
-            Primary Power (110V) : {dataopen?.pripow ? "On" : "Off"}<br/>
-            Maintenance Mode : {dataopen?.maintainance ? "On" : "Off"}<br/>
-            Latitude : {dataopen?.lat}<br/>
-            Longitude : {dataopen?.lng}<br/>
-            Last Updated : {dataopen ? new Date(dataopen.updatedAt).toLocaleString() : ''}
+            Primary Battery : {dataopen?.pribat}v<br />
+            Backup Battery : {dataopen?.backbat}v<br />
+            Signal Strength :{" "}
+            {dataopen ? getSignalInfo(dataopen.sig).label : ""} ({dataopen.sig})
+            <br />
+            Primary Power (110V) : {dataopen?.pripow ? "On" : "Off"}
+            <br />
+            Maintenance Mode : {dataopen?.maintainance ? "On" : "Off"}
+            <br />
+            Latitude : {dataopen?.lat}
+            <br />
+            Longitude : {dataopen?.lng}
+            <br />
+            Last Updated :{" "}
+            {dataopen ? new Date(dataopen.updatedAt).toLocaleString() : ""}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-        <Button onClick={() => navigate("/trainstatus", { state: dataopen })}>
+          <Button onClick={() => navigate("/trainstatus", { state: dataopen })}>
             History
           </Button>
-          <Button onClick={() => setOpen(false)}>
-            Close
-          </Button>
+          <Button onClick={() => setOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+          marginTop: 10,
+        }}
+      >
+        <Box
+          sx={{
+            width: "98%",
+            borderRadius: 3,
+            p: 2,
+            border: "2px solid #3271b8",
+            bgcolor: "#d1efffff",
+          }}
+        >
+          {/* Top Row: Title + Counts */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              flexWrap: "wrap",
+            }}
+          >
+            {/* LEFT: Title */}
+            <Typography
+              sx={{
+                color: "#3271b8",
+                fontSize: { xs: 16, md: 27 },
+                fontWeight: 600,
+              }}
+            >
+              Coach Status
+            </Typography>
+
+            {/* RIGHT: COUNT BOXES */}
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                flexWrap: "wrap",
+              }}
+            >
+              {/* Box 1 – Fault */}
+              <Box
+                sx={{
+                  width: { xs: 45, md: 100, lg: 100 },
+                  p: 1,
+                  borderRadius: 2,
+                  textAlign: "center",
+                  border: "2px solid #d21919",
+                  bgcolor: "#ffffffff",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: { xs: 12, md: 14, lg: 14 },
+                    color: "#d21919",
+                    fontWeight: 600,
+                  }}
+                >
+                  Fault
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: { xs: 17, md: 20, lg: 24 },
+                    fontWeight: 700,
+                    color: "#d21919",
+                  }}
+                >
+                  {faultCount}
+                </Typography>
+              </Box>
+
+              {/* Box 2 – Need Inspection */}
+              <Box
+                sx={{
+                  width: { xs: 75, md: 100, lg: 100 },
+                  p: 1,
+                  borderRadius: 2,
+                  textAlign: "center",
+                  border: "2px solid #E68500",
+                  bgcolor: "#ffffffff",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: { xs: 12, md: 14, lg: 14 },
+                    color: "#E68500",
+                    fontWeight: 600,
+                  }}
+                >
+                  Inspection
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: { xs: 17, md: 20, lg: 24 },
+                    fontWeight: 700,
+                    color: "#E68500",
+                  }}
+                >
+                  {inspectCount}
+                </Typography>
+              </Box>
+
+              {/* Box 3 – Normal */}
+              <Box
+                sx={{
+                  p: 1,
+                  width: { xs: 55, md: 100, lg: 100 },
+                  borderRadius: 2,
+                  textAlign: "center",
+                  border: "2px solid #00A693",
+                  bgcolor: "#ffffffff",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: { xs: 12, md: 14, lg: 14 },
+                    color: "#00A693",
+                    fontWeight: 600,
+                  }}
+                >
+                  Normal
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: { xs: 17, md: 20, lg: 24 },
+                    fontWeight: 700,
+                    color: "#00A693",
+                  }}
+                >
+                  {normalCount}
+                </Typography>
+              </Box>
+
+              {/* Box 4 – Maintenance */}
+              <Box
+                sx={{
+                  p: 1,
+                  width: { xs: 85, md: 100, lg: 100 },
+                  borderRadius: 2,
+                  textAlign: "center",
+                  border: "2px solid #555555",
+                  bgcolor: "#ffffffff",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: { xs: 12, md: 14, lg: 14 },
+                    color: "#555555",
+                    fontWeight: 600,
+                  }}
+                >
+                  Maintenance
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: { xs: 17, md: 20, lg: 24 },
+                    fontWeight: 700,
+                    color: "#555555",
+                  }}
+                >
+                  {maintCount}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
       <Box
         sx={{
@@ -126,14 +333,14 @@ if (loading) {
           justifyContent: "center",
           alignItems: "center",
           width: "100%",
-          marginTop: 13,
+          marginTop: 3,
         }}
       >
         <Grid
           container
           spacing={5}
           sx={{
-            width: "95%",
+            width: "100%",
             justifyContent: "center",
           }}
         >
@@ -141,7 +348,7 @@ if (loading) {
             container
             spacing={5}
             sx={{
-              width: { xs: "100%", md: "45%", lg: "45%" },
+              width: { xs: "95%", md: "48%", lg: "48%" },
               flexDirection: "column",
             }}
           >
@@ -149,12 +356,12 @@ if (loading) {
               container
               spacing={5}
               sx={{
-                bgcolor: "#FF91A4",
-                mb: 2,
+                bgcolor: "#FFC0CB",
+
                 padding: 2,
                 borderRadius: 3,
                 minHeight: 140,
-                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                border: "2px solid #CC3333",
               }}
             >
               <Typography
@@ -170,15 +377,24 @@ if (loading) {
                 Fault Detected - Primary Battery &lt; 20v
               </Typography>
 
-
-              {products.filter((product) => product.pribat < 20 && product.maintainance === false).map((product, index) => (
+              {products
+                .filter(
+                  (product) =>
+                    product.pribat < 20 && product.maintainance === false
+                )
+                .map((product, index) => (
                   <Grid
-                  key={index}
+                    key={index}
                     item
                     xs={12}
                     md={4}
                     lg={3}
-                    sx={{ bgcolor: "#007FFF", padding: 1, borderRadius: 2 }}
+                    sx={{
+                      bgcolor: "#45B1E8",
+                      padding: 1,
+                      borderRadius: 2,
+                      border: "2px solid #1560BD",
+                    }}
                     onClick={() => showProductDialog(product)}
                   >
                     <Typography
@@ -204,7 +420,7 @@ if (loading) {
                         mb: 1,
                       }}
                     >
-                      Last Update : {" "}
+                      Last Update :{" "}
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
@@ -231,7 +447,6 @@ if (loading) {
                     >
                       Backup Battery: {product.backbat}v
                     </Typography>
-                    
                   </Grid>
                 ))}
             </Grid>
@@ -240,12 +455,12 @@ if (loading) {
               container
               spacing={5}
               sx={{
-                bgcolor: "#FCF75E",
-                mb: 2,
+                bgcolor: "#F3E5AB",
+
                 padding: 2,
                 borderRadius: 3,
                 minHeight: 140,
-                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                border: "2px solid #FFBA00",
               }}
             >
               <Typography
@@ -262,15 +477,25 @@ if (loading) {
                 Needs Inspection - 20v &gt; Primary Battery &gt; 23v
               </Typography>
               {products
-                .filter((product) => product.pribat >= 20 && product.pribat <= 23 && product.maintainance === false)
+                .filter(
+                  (product) =>
+                    product.pribat >= 20 &&
+                    product.pribat <= 23 &&
+                    product.maintainance === false
+                )
                 .map((product, index) => (
                   <Grid
-                  key={index}
+                    key={index}
                     item
                     xs={12}
                     md={4}
                     lg={3}
-                    sx={{ bgcolor: "#007FFF", padding: 1, borderRadius: 2 }}
+                    sx={{
+                      bgcolor: "#45B1E8",
+                      padding: 1,
+                      borderRadius: 2,
+                      border: "2px solid #1560BD",
+                    }}
                     onClick={() => showProductDialog(product)}
                   >
                     <Typography
@@ -286,7 +511,6 @@ if (loading) {
                       {product.coachid}
                     </Typography>
 
-
                     <Typography
                       gutterBottom
                       sx={{
@@ -297,7 +521,7 @@ if (loading) {
                         mb: 1,
                       }}
                     >
-                      Last Update : {" "}
+                      Last Update :{" "}
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
@@ -324,7 +548,6 @@ if (loading) {
                     >
                       Backup Battery: {product.backbat}v
                     </Typography>
-                    
                   </Grid>
                 ))}
             </Grid>
@@ -333,11 +556,11 @@ if (loading) {
               container
               spacing={5}
               sx={{
-                bgcolor: "#50C878",
+                bgcolor: "#ACE1AF",
                 padding: 2,
                 borderRadius: 3,
                 minHeight: 140,
-                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                border: "2px solid #138808",
               }}
             >
               <Typography
@@ -354,15 +577,23 @@ if (loading) {
               </Typography>
 
               {products
-                .filter((product) => product.pribat > 23 && product.maintainance === false)
+                .filter(
+                  (product) =>
+                    product.pribat > 23 && product.maintainance === false
+                )
                 .map((product, index) => (
                   <Grid
-                  key={index}
+                    key={index}
                     item
                     xs={12}
                     md={4}
                     lg={3}
-                    sx={{ bgcolor: "#007FFF", padding: 1, borderRadius: 2 }}
+                    sx={{
+                      bgcolor: "#45B1E8",
+                      padding: 1,
+                      borderRadius: 2,
+                      border: "2px solid #1560BD",
+                    }}
                     onClick={() => showProductDialog(product)}
                   >
                     <Typography
@@ -388,7 +619,7 @@ if (loading) {
                         mb: 1,
                       }}
                     >
-                      Last Update : {" "}
+                      Last Update :{" "}
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
@@ -415,21 +646,19 @@ if (loading) {
                     >
                       Backup Battery: {product.backbat}v
                     </Typography>
-
                   </Grid>
                 ))}
             </Grid>
 
-
-<Grid
+            <Grid
               container
               spacing={5}
               sx={{
-                bgcolor: "#8C92AC",
+                bgcolor: "#E5E4E2",
                 padding: 2,
                 borderRadius: 3,
                 minHeight: 140,
-                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                border: "2px solid #555555",
               }}
             >
               <Typography
@@ -449,12 +678,17 @@ if (loading) {
                 .filter((product) => product.maintainance === true)
                 .map((product, index) => (
                   <Grid
-                  key={index}
+                    key={index}
                     item
                     xs={12}
                     md={4}
                     lg={3}
-                    sx={{ bgcolor: "#007FFF", padding: 1, borderRadius: 2 }}
+                    sx={{
+                      bgcolor: "#45B1E8",
+                      padding: 1,
+                      borderRadius: 2,
+                      border: "2px solid #1560BD",
+                    }}
                     onClick={() => showProductDialog(product)}
                   >
                     <Typography
@@ -480,7 +714,7 @@ if (loading) {
                         mb: 1,
                       }}
                     >
-                      Last Update : {" "}
+                      Last Update :{" "}
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
@@ -507,46 +741,82 @@ if (loading) {
                     >
                       Backup Battery: {product.backbat}v
                     </Typography>
-
                   </Grid>
                 ))}
             </Grid>
-
           </Grid>
 
-          <Grid container sx={{ width: { xs: "100%", md: "50%", lg: "45%" }, bgcolors: "#ffffffff" }}>
-            <Box
+          <Grid item sx={{ width: { xs: "95%", md: "48%", lg: "48%" } }}>
+            <Paper
+              elevation={3}
               sx={{
-                width: "100%",
-                height: "100vh",
+                p: 2,
                 borderRadius: 2,
-                overflow: "hidden",
-                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                height: "100%", // Fills the height of the column
+                display: "flex",
+                flexDirection: "column",
+                borderColor: "#0070FF",
+                borderWidth: 1,
+                borderStyle: "solid",
               }}
             >
-              <MapContainer
-                center={position}
-                zoom={7}
-                style={{ width: "100%", height: "100%" }}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                  flexWrap: "wrap",
+                }}
               >
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-                />
+                <Typography
+                  sx={{
+                    color: "#0070FF",
+                    fontSize: { xs: 18, md: 22 },
+                    fontWeight: 600,
+                  }}
+                >
+                  Coach Location
+                </Typography>
+              </Box>
 
-{
-                  products.map((product, index) => (
-                    <Marker position={[product.lat, product.lng]} key={index} eventHandlers={{
-    click: () => showProductDialog(product),
-  }}>
-                      <Popup onClick={() => showProductDialog(product)}>{product.coachid}</Popup>
+              {/* Map Container */}
+              <Box
+                sx={{
+                  flexGrow: 1, // Takes remaining vertical space
+                  minHeight: "500px", // Minimum height for map
+                  width: "100%",
+                  borderRadius: 2,
+                  overflow: "hidden",
+                  border: "1px solid #e0e0e0",
+                }}
+              >
+                <MapContainer
+                  center={position}
+                  zoom={7}
+                  style={{ width: "100%", height: "100%" }}
+                >
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+                  />
+
+                  {products.map((product, index) => (
+                    <Marker
+                      position={[product.lat, product.lng]}
+                      key={index}
+                      eventHandlers={{
+                        click: () => showProductDialog(product),
+                      }}
+                    >
+                      <Popup onClick={() => showProductDialog(product)}>
+                        {product.coachid}
+                      </Popup>
                     </Marker>
-                  ))
-}
-                
-
-              </MapContainer>
-            </Box>
+                  ))}
+                </MapContainer>
+              </Box>
+            </Paper>
           </Grid>
         </Grid>
       </Box>
