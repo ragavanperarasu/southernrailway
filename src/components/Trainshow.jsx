@@ -780,7 +780,6 @@ const Trainshow = () => {
                 </Typography>
               </Box>
 
-              {/* Map Container */}
               <Box
                 sx={{
                   flexGrow: 1, // Takes remaining vertical space
