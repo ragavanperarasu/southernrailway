@@ -13,8 +13,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  CircularProgress,
-  Stack,
 } from "@mui/material";
 
 import { io } from "socket.io-client";
@@ -166,7 +164,7 @@ const Trainshow = () => {
             width: "98%",
             borderRadius: 3,
             p: 2,
-            border: "2px solid #3271b8",
+            border: "1px solid #3271b8",
             bgcolor: "#d1efffff",
           }}
         >
@@ -206,7 +204,7 @@ const Trainshow = () => {
                   p: 1,
                   borderRadius: 2,
                   textAlign: "center",
-                  border: "2px solid #d21919",
+                  border: "1px solid #d21919",
                   bgcolor: "#ffffffff",
                 }}
               >
@@ -237,7 +235,7 @@ const Trainshow = () => {
                   p: 1,
                   borderRadius: 2,
                   textAlign: "center",
-                  border: "2px solid #E68500",
+                  border: "1px solid #E68500",
                   bgcolor: "#ffffffff",
                 }}
               >
@@ -268,7 +266,7 @@ const Trainshow = () => {
                   width: { xs: 55, md: 100, lg: 100 },
                   borderRadius: 2,
                   textAlign: "center",
-                  border: "2px solid #00A693",
+                  border: "1px solid #00A693",
                   bgcolor: "#ffffffff",
                 }}
               >
@@ -299,7 +297,7 @@ const Trainshow = () => {
                   width: { xs: 85, md: 100, lg: 100 },
                   borderRadius: 2,
                   textAlign: "center",
-                  border: "2px solid #555555",
+                  border: "1px solid #555555",
                   bgcolor: "#ffffffff",
                 }}
               >
@@ -361,7 +359,7 @@ const Trainshow = () => {
                 padding: 2,
                 borderRadius: 3,
                 minHeight: 140,
-                border: "2px solid #CC3333",
+                border: "1px solid #CC3333",
               }}
             >
               <Typography
@@ -393,7 +391,7 @@ const Trainshow = () => {
                       bgcolor: "#45B1E8",
                       padding: 1,
                       borderRadius: 2,
-                      border: "2px solid #1560BD",
+                      border: "1px solid #1560BD",
                     }}
                     onClick={() => showProductDialog(product)}
                   >
@@ -460,7 +458,7 @@ const Trainshow = () => {
                 padding: 2,
                 borderRadius: 3,
                 minHeight: 140,
-                border: "2px solid #FFBA00",
+                border: "1px solid #FFBA00",
               }}
             >
               <Typography
@@ -474,7 +472,7 @@ const Trainshow = () => {
                   width: "100%",
                 }}
               >
-                Needs Inspection - 20v &gt; Primary Battery &gt; 23v
+                Needs Inspection - 20v &lt; Primary Battery &gt; 23v
               </Typography>
               {products
                 .filter(
@@ -494,7 +492,7 @@ const Trainshow = () => {
                       bgcolor: "#45B1E8",
                       padding: 1,
                       borderRadius: 2,
-                      border: "2px solid #1560BD",
+                      border: "1px solid #1560BD",
                     }}
                     onClick={() => showProductDialog(product)}
                   >
@@ -560,7 +558,7 @@ const Trainshow = () => {
                 padding: 2,
                 borderRadius: 3,
                 minHeight: 140,
-                border: "2px solid #138808",
+                border: "1px solid #138808",
               }}
             >
               <Typography
@@ -592,7 +590,7 @@ const Trainshow = () => {
                       bgcolor: "#45B1E8",
                       padding: 1,
                       borderRadius: 2,
-                      border: "2px solid #1560BD",
+                      border: "1px solid #1560BD",
                     }}
                     onClick={() => showProductDialog(product)}
                   >
@@ -658,7 +656,7 @@ const Trainshow = () => {
                 padding: 2,
                 borderRadius: 3,
                 minHeight: 140,
-                border: "2px solid #555555",
+                border: "1px solid #555555",
               }}
             >
               <Typography
@@ -687,7 +685,7 @@ const Trainshow = () => {
                       bgcolor: "#45B1E8",
                       padding: 1,
                       borderRadius: 2,
-                      border: "2px solid #1560BD",
+                      border: "1px solid #1560BD",
                     }}
                     onClick={() => showProductDialog(product)}
                   >
