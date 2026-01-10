@@ -57,42 +57,60 @@ const greenIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
+const limit = 400; // initial load size
+
 const Trainstatus = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { coachid } = location.state || {};
 
-  const [trainData, setTrainData] = useState(null);
+  const [trainData, setTrainData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [comData, setComData] = useState([]);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    fetchData();
+    fetchData(false); // initial load
   }, [coachid]);
 
-  const fetchData = async () => {
+  const fetchData = async (loadMore = false) => {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_API_URL + `coach/${coachid}`
+      setLoading(true);
+
+      const res = await axios.get(
+        `${
+          import.meta.env.VITE_API_URL
+        }coach/${coachid}?page=${page}&limit=${limit}`
       );
 
-      const raw = response.data;
+      // ✅ safe response handling
+      const raw = res.data.data;
 
-      const combinedData = raw.map((item) => {
+      // ---- format chart data ----
+      const newComData = raw.map((item) => {
         const d = new Date(item.createdAt);
         const date = d.toISOString().split("T")[0];
         const time = d.toLocaleTimeString();
-        const formattedTime = `${date} ${time}`;
 
         return {
-          time: formattedTime,
+          time: `${date} ${time}`,
           pribat: item.pribat,
           backbat: item.backbat,
           signal: item.sig,
         };
       });
-      setComData(combinedData);
-      setTrainData(raw);
+
+      if (loadMore) {
+        // 🔥 append data
+        setTrainData((prev) => [...prev, ...raw]);
+        setComData((prev) => [...prev, ...newComData]);
+        setPage((prev) => prev + 1);
+      } else {
+        // initial load
+        setTrainData(raw);
+        setComData(newComData);
+        setPage(2);
+      }
     } catch (error) {
       console.error("Error fetching train status data:", error);
     } finally {
@@ -100,20 +118,22 @@ const Trainstatus = () => {
     }
   };
 
-    const fetchData2 = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}coachloc/${coachid}`);
-  
-        const raw = response.data;
-  
-        setTrainData(raw);
-      } catch (error) {
-        console.error("Error fetching train status data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData2 = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}coachloc/${coachid}`
+      );
+
+      const raw = response.data;
+
+      setTrainData(raw);
+    } catch (error) {
+      console.error("Error fetching train status data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -128,30 +148,103 @@ const Trainstatus = () => {
     <Box sx={{ bgcolor: "#ffffffff", minHeight: "100vh", pb: 4 }}>
       <Appbar />
 
-      {/* Main Page Title */}
-      <Typography
+      <Box
         sx={{
-          color: "#00A693",
-          fontSize: { xs: 20, md: 27, lg: 27 },
-          fontWeight: 600,
-          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
           width: "100%",
+          marginTop: 10,
           marginBottom: 2,
-          marginTop: 12,
         }}
       >
-        Coach History - {coachid}
-      </Typography>
+        <Box
+          sx={{
+            width: "98%",
+            borderRadius: 3,
+            p: 2,
+            border: "1px solid #3271b8",
+            bgcolor: "#d1efffff",
+          }}
+        >
+          {/* Top Row: Title + Counts */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              flexWrap: "wrap",
+            }}
+          >
+            {/* LEFT: Title */}
+            <Typography
+              sx={{
+                color: "#3271b8",
+                fontSize: { xs: 20, md: 27 },
+                fontWeight: 600,
+                mb: 1,
+              }}
+            >
+              {coachid} - Status Overview
+            </Typography>
+
+            {/* RIGHT: COUNT BOXES */}
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                flexWrap: "wrap",
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: { xs: 20, md: 20, lg: 22 },
+                  fontWeight: 700,
+                  color: "#555555",
+                }}
+              >
+                Loaded data : {trainData.length}
+              </Typography>
+
+              <Button
+                variant="contained"
+                size="small"
+                sx={{
+                  backgroundColor: "#1d7fffff",
+                  textTransform: "none",
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  boxShadow: "none",
+                }}
+                onClick={() => fetchData(true)}
+              >
+                Load More Data
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
       {/* Grid Layout: Left (Charts) - Right (Map) */}
       <Box>
-        <Grid container spacing={2} sx={{display:'flex', justifyContent:'center'}}>
-          
+        <Grid
+          container
+          spacing={2}
+          sx={{ display: "flex", justifyContent: "center" }}
+        >
           {/* LEFT COLUMN: GRAPHS */}
-          <Grid item sx={{width:{ xs: '95%', md: '48%', lg: '48%' }}}>
-            
+          <Grid item sx={{ width: { xs: "95%", md: "48%", lg: "48%" } }}>
             {/* Battery Chart */}
-            <Paper sx={{ p: 2, borderRadius: 2, borderColor: "#000", borderWidth: 1, borderStyle: 'solid', mb: 2 }} >
+            <Paper
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                borderColor: "#000",
+                borderWidth: 1,
+                borderStyle: "solid",
+                mb: 2,
+              }}
+            >
               <Typography
                 sx={{
                   color: "#000",
@@ -193,7 +286,15 @@ const Trainstatus = () => {
             </Paper>
 
             {/* Signal Chart */}
-            <Paper sx={{ p: 2, borderRadius: 2, borderColor: "#d219b9ff", borderWidth: 1, borderStyle: 'solid' }} >
+            <Paper
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                borderColor: "#d219b9ff",
+                borderWidth: 1,
+                borderStyle: "solid",
+              }}
+            >
               <Typography
                 sx={{
                   color: "#d219b9ff",
@@ -226,7 +327,7 @@ const Trainstatus = () => {
           </Grid>
 
           {/* RIGHT COLUMN: MAP */}
-          <Grid item sx={{width:{ xs: '95%', md: '48%', lg: '48%' }}}>
+          <Grid item sx={{ width: { xs: "95%", md: "48%", lg: "48%" } }}>
             <Paper
               elevation={3}
               sx={{
@@ -235,7 +336,9 @@ const Trainstatus = () => {
                 height: "100%", // Fills the height of the column
                 display: "flex",
                 flexDirection: "column",
-                 borderColor: "#0070FF", borderWidth: 1, borderStyle: 'solid'
+                borderColor: "#0070FF",
+                borderWidth: 1,
+                borderStyle: "solid",
               }}
             >
               <Box
@@ -256,20 +359,19 @@ const Trainstatus = () => {
                 >
                   Location History
                 </Typography>
-                <Button
-                  variant="contained"
-                  size="small"
-                  sx={{
-                    backgroundColor: "#0070FF",
-                    textTransform: "none",
-                    borderRadius: "8px",
-                    fontWeight: 600,
-                  }}
-                  onClick={fetchData2}
-                  
-                >
-                  Show Full History
-                </Button>
+                {/* <Button
+  variant="contained"
+  size="small"
+  sx={{
+    backgroundColor: "#0070FF",
+    textTransform: "none",
+    borderRadius: "8px",
+    fontWeight: 600,
+  }}
+  onClick={() => fetchData(true)}
+>
+  Load More History
+</Button> */}
               </Box>
 
               {/* Map Container */}
