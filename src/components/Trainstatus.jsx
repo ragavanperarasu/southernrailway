@@ -118,23 +118,6 @@ const Trainstatus = () => {
     }
   };
 
-  const fetchData2 = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}coachloc/${coachid}`
-      );
-
-      const raw = response.data;
-
-      setTrainData(raw);
-    } catch (error) {
-      console.error("Error fetching train status data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (loading) {
     return (
       <>
