@@ -9,10 +9,13 @@ import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import DirectionsSubwayIcon from "@mui/icons-material/DirectionsSubway";
 import { useNavigate } from "react-router-dom";
+import CellTowerIcon from '@mui/icons-material/CellTower';
+import PodcastsIcon from '@mui/icons-material/Podcasts';
 
 const Appbar = () => {
   const navigate = useNavigate();
@@ -22,10 +25,12 @@ const Appbar = () => {
     setOpen(state);
   };
 
-  const menuItems = [
-    { text: "Master Device", path: "/" },
-    // { text: "Train Status", path: "/trainshow" },
-  ];
+
+const menuItems = [
+  { text: "Gateways", path: "/gateways", icon: <CellTowerIcon sx={{fontSize:25}}/> },
+  { text: "Transmitter", path: "/transmitter", icon: <PodcastsIcon sx={{fontSize:25}}/> },
+];
+
 
   return (
     <>
@@ -63,9 +68,21 @@ const Appbar = () => {
           </Typography>
 
           {/* 🔹 Desktop Menu */}
-          <Box sx={{ display: { xs: "none", md: "block" } }}>
-            <Button color="inherit" onClick={() => navigate("/")}>
-              Master Device
+          <Box sx={{ display: { xs: "none", md: "block" }, gap: 2 }}>
+            <Button color="inherit" 
+            // onClick={() => navigate("/")}
+            startIcon={<CellTowerIcon />}
+            sx={{mr:1}}
+            >
+              Gateway
+            </Button>
+
+                        <Button color="inherit" 
+            // onClick={() => navigate("/")}
+            startIcon={<PodcastsIcon />}
+            
+            >
+              Transmitter
             </Button>
           </Box>
         </Toolbar>
@@ -98,30 +115,37 @@ const Appbar = () => {
       </Typography>
     </Box>
 
-    {/* 🔹 Menu Items */}
-    <List>
-      {menuItems.map((item) => (
-        <ListItem key={item.text} disablePadding>
-          <ListItemButton
-            sx={{
-              px: 3,
-              py: 1.5,
-              "&:hover": {
-                backgroundColor: "#e3f2fd",
-              },
-            }}
-            onClick={() => {
-              navigate(item.path);
-              setOpen(false);
-            }}
-          >
-            <ListItemText
-              primary={item.text}
-            />
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
+<List>
+  {menuItems.map((item) => (
+    <ListItem key={item.text} disablePadding>
+      <ListItemButton
+        sx={{
+          px: 3,
+          py: 1.5,
+          "&:hover": {
+            backgroundColor: "#e3f2fd",
+          },
+        }}
+        onClick={() => {
+          navigate(item.path);
+          setOpen(false);
+        }}
+      >
+        <ListItemIcon sx={{ color: "#3271b8"}}>
+          {item.icon}
+        </ListItemIcon>
+
+        <ListItemText
+          primary={item.text}
+          primaryTypographyProps={{
+            fontWeight: 500,
+          }}
+        />
+      </ListItemButton>
+    </ListItem>
+  ))}
+</List>
+
   </Box>
 </Drawer>
 
