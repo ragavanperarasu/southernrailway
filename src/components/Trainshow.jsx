@@ -770,7 +770,7 @@ const Trainshow = () => {
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
- <Typography
+                    <Typography
                       gutterBottom
                       sx={{
                         display: "flex",
@@ -870,7 +870,10 @@ const Trainshow = () => {
 
                   {products.map((product, index) => (
                     <Marker
-                      position={[product.lat, product.lng]}
+                      position={[
+                        product.mlat ?? product.lat,
+                        product.mlng ?? product.lng,
+                      ]}
                       key={index}
                       eventHandlers={{
                         click: () => showProductDialog(product),
