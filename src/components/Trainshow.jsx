@@ -20,6 +20,10 @@ import { io } from "socket.io-client";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import Battery6BarIcon from "@mui/icons-material/Battery6Bar";
+import BatteryCharging90Icon from "@mui/icons-material/BatteryCharging90";
+import UpdateIcon from "@mui/icons-material/Update";
+import RssFeedIcon from "@mui/icons-material/RssFeed";
 
 import LoadingScreen from "./LoadingScreen";
 
@@ -587,61 +591,94 @@ const Trainshow = () => {
                     md={4}
                     lg={3}
                     sx={{
-                      bgcolor: "#45B1E8",
-                      padding: 1,
+                      bgcolor: "#FFFFFF",
+                      py: 1,
+                      px: 3,
                       borderRadius: 2,
-                      border: "1px solid #1560BD",
+                      border: "1px solid #138808",
                     }}
                     onClick={() => showProductDialog(product)}
                   >
                     <Typography
                       gutterBottom
                       sx={{
-                        color: "white",
+                        color: "#EC5800",
                         fontSize: { xs: 17, md: 20, lg: 20 },
                         fontWeight: 600,
                         textAlign: "center",
-                        mb: 1,
+                        my: 0,
+                        ml: 1,
                       }}
                     >
-                      {product.coachid}
+                      {product.coachid}{" "}
+                      <RssFeedIcon
+                        sx={{
+                          color: "#EC5800",
+                          fontSize: { xs: 17, md: 20, lg: 24 },
+                        }}
+                      />
                     </Typography>
 
                     <Typography
                       gutterBottom
                       sx={{
-                        color: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.3,
+                        color: "#003262",
                         fontSize: 14,
                         fontWeight: 500,
                         textAlign: "center",
                         mb: 1,
+                        mx: 1,
                       }}
                     >
-                      Last Update :{" "}
+                      <UpdateIcon
+                        sx={{
+                          color: "#003262",
+                          fontSize: { xs: 18, md: 20, lg: 17 },
+                        }}
+                      />{" "}
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
                     <Typography
                       gutterBottom
                       sx={{
-                        color: "white",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        color: "#008080",
                         fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
                     >
+                      <BatteryCharging90Icon
+                        sx={{
+                          color: "#008080",
+                          fontSize: { xs: 18, md: 20, lg: 20 },
+                        }}
+                      />
                       Primary Battery: {product.pribat}v
                     </Typography>
 
                     <Typography
                       gutterBottom
                       sx={{
-                        color: "white",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        color: "#DC343B",
                         fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
                     >
+                      <BatteryCharging90Icon
+                        sx={{
+                          color: "#DC343B",
+                          fontSize: { xs: 18, md: 20, lg: 20 },
+                        }}
+                      />
                       Backup Battery: {product.backbat}v
                     </Typography>
                   </Grid>
@@ -682,61 +719,94 @@ const Trainshow = () => {
                     md={4}
                     lg={3}
                     sx={{
-                      bgcolor: "#45B1E8",
-                      padding: 1,
+                      bgcolor: "#FFFFFF",
+                      py: 1,
+                      px: 3,
                       borderRadius: 2,
-                      border: "1px solid #1560BD",
+                      border: "1px solid #555555",
                     }}
                     onClick={() => showProductDialog(product)}
                   >
                     <Typography
                       gutterBottom
                       sx={{
-                        color: "white",
+                        color: "#EC5800",
                         fontSize: { xs: 17, md: 20, lg: 20 },
                         fontWeight: 600,
                         textAlign: "center",
-                        mb: 1,
+                        my: 0,
+                        ml: 1,
                       }}
                     >
-                      {product.coachid}
+                      {product.coachid}{" "}
+                      <RssFeedIcon
+                        sx={{
+                          color: "#EC5800",
+                          fontSize: { xs: 17, md: 20, lg: 24 },
+                        }}
+                      />
                     </Typography>
 
                     <Typography
                       gutterBottom
                       sx={{
-                        color: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.3,
+                        color: "#003262",
                         fontSize: 14,
                         fontWeight: 500,
                         textAlign: "center",
                         mb: 1,
+                        mx: 1,
                       }}
                     >
-                      Last Update :{" "}
+                      <UpdateIcon
+                        sx={{
+                          color: "#003262",
+                          fontSize: { xs: 18, md: 20, lg: 17 },
+                        }}
+                      />{" "}
                       {new Date(product.updatedAt).toLocaleString()}
                     </Typography>
 
-                    <Typography
+ <Typography
                       gutterBottom
                       sx={{
-                        color: "white",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        color: "#008080",
                         fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
                     >
+                      <BatteryCharging90Icon
+                        sx={{
+                          color: "#008080",
+                          fontSize: { xs: 18, md: 20, lg: 20 },
+                        }}
+                      />
                       Primary Battery: {product.pribat}v
                     </Typography>
 
                     <Typography
                       gutterBottom
                       sx={{
-                        color: "white",
+                        display: "flex",
+                        alignItems: "flex-start",
+                        color: "#DC343B",
                         fontSize: { xs: 14, md: 16, lg: 16 },
                         fontWeight: 600,
                         mb: 1,
                       }}
                     >
+                      <BatteryCharging90Icon
+                        sx={{
+                          color: "#DC343B",
+                          fontSize: { xs: 18, md: 20, lg: 20 },
+                        }}
+                      />
                       Backup Battery: {product.backbat}v
                     </Typography>
                   </Grid>

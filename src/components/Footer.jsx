@@ -76,7 +76,7 @@ const Footer = () => {
         >
           This is not the official Southern Railway website. A GCT student made this only for a project.
           <br /><br />
-          Copyright &copy; Sitemark 2025
+          Copyright &copy; Sitemark 2026
         </Typography>
       </CardContent>
   );
