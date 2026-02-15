@@ -140,9 +140,9 @@ const Trainshow = () => {
             <br />
             Maintenance Mode : {dataopen?.maintainance ? "On" : "Off"}
             <br />
-            Latitude : {dataopen?.lat}
+            Latitude : { dataopen?.mlat ?? dataopen?.lat}
             <br />
-            Longitude : {dataopen?.lng}
+            Longitude : {dataopen?.mlng ?? dataopen?.lng}
             <br />
             Last Updated :{" "}
             {dataopen ? new Date(dataopen.updatedAt).toLocaleString() : ""}
