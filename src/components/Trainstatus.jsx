@@ -86,6 +86,8 @@ const Trainstatus = () => {
       // ✅ safe response handling
       const raw = res.data.data;
 
+      
+
       // ---- format chart data ----
       const newComData = raw.map((item) => {
         const d = new Date(item.createdAt);
@@ -371,7 +373,7 @@ const Trainstatus = () => {
                 <MapContainer
                   center={
                     trainData[0]
-                      ? [trainData[0].lat, trainData[0].lng]
+                      ? [trainData[0].mlat ?? trainData[0].lat, trainData[0].mlng ?? trainData[0].lng]
                       : position
                   }
                   zoom={7}
@@ -384,7 +386,7 @@ const Trainstatus = () => {
 
                   {trainData.map((product, index) => (
                     <Marker
-                      position={[product.lat, product.lng]}
+                      position={[product?.mlat ?? product.lat, product?.mlng ?? product.lng]}
                       icon={index === 0 ? redIcon : greenIcon}
                       key={index}
                     >
