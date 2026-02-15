@@ -170,7 +170,7 @@ const Trainstatus = () => {
                 mb: 1,
               }}
             >
-              {coachid} - Status Overview
+              {coachid === "Test" ? "176119" : coachid === "Master" ? "151537/C" : coachid} - Status Overview
             </Typography>
 
             {/* RIGHT: COUNT BOXES */}

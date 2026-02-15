@@ -128,7 +128,7 @@ const Trainshow = () => {
       <Appbar />
 
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>{dataopen?.coachid}</DialogTitle>
+        <DialogTitle>{dataopen?.coachid === "Test" ? "176119" : dataopen?.coachid === "Master" ? "151537/C" : dataopen?.coachid}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Primary Battery : {dataopen?.pribat}v<br />
@@ -738,7 +738,7 @@ const Trainshow = () => {
                         ml: 1,
                       }}
                     >
-                      {product.coachid}{" "}
+                      {product.coachid === "Test" ? "176119" : "151537/C"}{" "}
                       <RssFeedIcon
                         sx={{
                           color: "#EC5800",
